@@ -1,5 +1,4 @@
 package com.example.workclass2.ui.screens
-
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
@@ -11,62 +10,64 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.workclass2.data.model.AccountModel
-import com.example.workclass2.data.model.UserModel
 import com.example.workclass2.data.viewmodel.AccountViewModel
-import com.example.workclass2.data.viewmodel.UserViewModel
 import com.example.workclass2.ui.components.TopBarComponent
 
 @Composable
 fun ManageAccountScreen(
     navController: NavController,
-    id: Int? = null,
+    accountId: Int? = null,
     viewModel: AccountViewModel = viewModel()
-){
-
+) {
     val account = remember { mutableStateOf(AccountModel()) }
     val context = LocalContext.current
 
-    LaunchedEffect(id) {
-        if (id != null) {
-            viewModel.getAccount(id) { response ->
+    LaunchedEffect(accountId) {
+        accountId?.let {
+            viewModel.getAccount(it) { response ->
                 if (response.isSuccessful) {
-                    response.body()?.let {
-                        account.value = it
-                    }
-                } else {
-                    Log.d("debug", "Error al obtener cuenta")
+                    account.value = response.body() ?: AccountModel()
                 }
             }
         }
     }
 
-
-    Column (
+    Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
             .padding(10.dp)
             .fillMaxSize()
-    ){
-        TopBarComponent("Add account",navController,"manage_account_screen")
+    ) {
+        TopBarComponent("Account Management", navController, "manage_account_screen")
 
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth(),
             value = account.value.name,
             maxLines = 1,
-            label = {"Account Name "},
-            onValueChange = {account.value = account.value.copy(name = it)}
+            onValueChange = { account.value = account.value.copy(name = it) },
+            label = { Text("Account Name") },
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                focusedBorderColor = MaterialTheme.colorScheme.secondary,
+                unfocusedContainerColor = Color.Transparent,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                focusedTextColor = MaterialTheme.colorScheme.secondary
+            )
         )
 
         OutlinedTextField(
@@ -74,8 +75,15 @@ fun ManageAccountScreen(
                 .fillMaxWidth(),
             value = account.value.username,
             maxLines = 1,
-            label = {"Account Username "},
-            onValueChange = {account.value = account.value.copy(username = it)}
+            onValueChange = { account.value = account.value.copy(username = it) },
+            label = { Text("Account Username") },
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                focusedBorderColor = MaterialTheme.colorScheme.secondary,
+                unfocusedContainerColor = Color.Transparent,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                focusedTextColor = MaterialTheme.colorScheme.secondary
+            )
         )
 
         OutlinedTextField(
@@ -83,8 +91,16 @@ fun ManageAccountScreen(
                 .fillMaxWidth(),
             value = account.value.password,
             maxLines = 1,
-            label = {"Account Password "},
-            onValueChange = {account.value = account.value.copy(password = it)}
+            onValueChange = { account.value = account.value.copy(password = it) },
+            label = { Text("Account Password") },
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                focusedBorderColor = MaterialTheme.colorScheme.secondary,
+                unfocusedContainerColor = Color.Transparent,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                focusedTextColor = MaterialTheme.colorScheme.secondary
+            )
+
         )
 
         OutlinedTextField(
@@ -92,53 +108,136 @@ fun ManageAccountScreen(
                 .fillMaxWidth(),
             value = account.value.description,
             maxLines = 1,
-            label = {"Account Description "},
-            onValueChange = {account.value = account.value.copy(description = it)}
+            onValueChange = { account.value = account.value.copy(description = it) },
+            label = { Text("Account Description") },
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                focusedBorderColor = MaterialTheme.colorScheme.secondary,
+                unfocusedContainerColor = Color.Transparent,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                focusedTextColor = MaterialTheme.colorScheme.secondary
+            )
+
         )
+
         FilledTonalButton(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(0.dp,10.dp),
+                .padding(0.dp, 10.dp),
             onClick = {
-                if (id == null) {
-                    // Crear
-                    TryAccount(
-                        account.value.name,
-                        account.value.username,
-                        account.value.password,
-                        account.value.description,
-                        viewModel,
-                        context,
-
-                        )
-                } else {
-                    // Actualizar
-                    viewModel.updateAccount(id, account.value) { response ->
-                        Toast.makeText(context, "Cuenta actualizada correctamente", Toast.LENGTH_SHORT).show()
-                    }
-                }
+                TryCreateUpdateAccount(account, context, viewModel, accountId, navController)
             }
         ) {
-            Text(if (id == null) "Guardar cuenta" else "Actualizar cuenta")
+            Text("Save/Update Account")
         }
 
+        FilledTonalButton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(0.dp, 10.dp),
+            onClick = {
+                TryDeleteAccount(accountId, context, viewModel, navController)
+            }
+        ) {
+            Text(text = "Delete Account")
+        }
+    }
+
+}
+
+fun TryCreateUpdateAccount(
+    accountState: MutableState<AccountModel>,
+    context: Context,
+    viewModel: AccountViewModel,
+    accountId: Int?,
+    navController: NavController
+) {
+    try {
+        val acc = accountState.value
+        if (
+            acc.name.isEmpty() ||
+            acc.username.isEmpty() ||
+            acc.password.isEmpty() ||
+            acc.description.isEmpty()
+        ) {
+            Log.d("debug", "ERROR")
+            Toast.makeText(
+                context,
+                "None of the fields can be empty",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+        if (accountId == null) {
+            viewModel.createAccount(acc) { jsonResponse ->
+                val createAcStatus = jsonResponse?.get("store")?.asString
+                Log.d("debug", "Create account status: $createAcStatus")
+                if (createAcStatus == "success") {
+                    Toast.makeText(
+                        context,
+                        "Account created successfully",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                    navController.popBackStack()
+                } else {
+                    Toast.makeText(
+                        context,
+                        "Error creating account",
+                        Toast.LENGTH_SHORT).show()
+                }
+            }
+        } else {
+            viewModel.updateAccount(accountId, acc) { jsonResponse ->
+                val updateAcStatus = jsonResponse?.get("update")?.asString
+                Log.d("debug", "Update account status: $updateAcStatus")
+                if (updateAcStatus == "success") {
+                    Toast.makeText(
+                        context,
+                        "Account updated successfully",
+                        Toast.LENGTH_SHORT)
+                        .show()
+                    navController.popBackStack()
+                } else {
+                    Toast.makeText(
+                        context,
+                        "Error updating account",
+                        Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+        }
+    } catch (exception: Exception) {
+        Log.d("debug", "ERROR: $exception")
     }
 }
 
-fun TryAccount(name:String,username:String,password:String,description:String,viewModel: AccountViewModel, context: Context) {
-    if (name == "" || username == "" || password == "" || description == "") {
-        Toast.makeText(
-            context,
-            "Error agregue todos los datos ",
-            Toast.LENGTH_SHORT
-        ).show()
-    } else {
-        val add_Account = AccountModel(0, name, username, password, description)
-        viewModel.createAccount(add_Account) { jsonResponse ->
-            val CreateStatus = jsonResponse?.get("addAccount")?.asString
+fun TryDeleteAccount(
+    accountId: Int?,
+    context: Context,
+    viewModel: AccountViewModel,
+    navController: NavController
+) {
+    if (accountId == null) {
+        Toast.makeText(context, "No account to delete", Toast.LENGTH_SHORT).show()
+        return
+    }
+
+    viewModel.deleteAccount(accountId) { jsonResponse ->
+        val deleteStatus = jsonResponse?.get("delete")?.asString
+        Log.d("debug", "Delete account status: $deleteStatus")
+
+        if (deleteStatus == "success") {
             Toast.makeText(
                 context,
-                "Se agrego la cuenta de forma exitosa",
+                "Account deleted successfully",
+                Toast.LENGTH_SHORT
+            ).show()
+            navController.popBackStack()
+        } else {
+            Toast.makeText(
+                context,
+                "Error deleting account",
                 Toast.LENGTH_SHORT
             ).show()
         }

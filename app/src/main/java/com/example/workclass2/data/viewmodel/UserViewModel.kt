@@ -9,22 +9,23 @@ import com.google.gson.JsonObject
 import kotlinx.coroutines.launch
 
 
-class UserViewModel : ViewModel() {
+class UserViewModel:ViewModel() {
     val api = RetrofitClient.api
 
-    fun loginApi(user_model: UserModel, onResult: (JsonObject?) -> Unit){
+    fun loginAPI(user_model:UserModel, onResult: (JsonObject?) -> Unit){
         viewModelScope.launch {
             try {
                 val response = api.login(user_model)
-                if(response.isSuccessful){
+                if (response.isSuccessful){
                     val jsonResponse = response.body()
                     Log.d("debug", "${response.body()}")
                     onResult(jsonResponse)
-                } else {
-                    Log.d("debug", "Error: ${response.body()}")
+                }else{
+                    Log.d("debug", "ERROR: ${response.body()}")
                     onResult(null)
                 }
-            } catch (exception: Exception){
+            }catch(exception: Exception){
+
                 Log.d("debug", "API CALL FAILED: $exception")
                 onResult(null)
             }

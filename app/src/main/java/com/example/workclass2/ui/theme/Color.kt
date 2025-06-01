@@ -1,26 +1,38 @@
 package com.example.workclass2.ui.theme
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+// Blue - tonos pastel suaves
+val Blue50 = Color(0xFFEAF6FF)         // Azul cielo muy claro
+val Blue100 = Color(0xFFD0ECFF)        // Azul hielo
+val Blue200 = Color(0xFFB2DFFF)        // Azul pastel
+val Blue300 = Color(0xFF99D1FF)
+val Blue400 = Color(0xFF7FC3FF)
+val Blue500 = Color(0xFF66B5FF)
+val Blue600 = Color(0xFF4AA8FF)
+val Blue700 = Color(0xFF339AFF)
+val Blue800 = Color(0xFF1B8CFF)
+val Blue900 = Color(0xFF007DFF)
+val BlueA100 = Color(0xFFA3CFFF)
+val BlueA200 = Color(0xFF88BEFF)
+val BlueA400 = Color(0xFF6EAEFF)
+val BlueA700 = Color(0xFF549EFF)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
-val Orange = Color(0xFFFFA500)
+val Purplee80 = Color(0xFFF3E8FF)       // Lila bajito, muy suave
+val PurpleeGrey80 = Color(0xFFEADCF0)   // Gris-lila claro
+val Pinnk80 = Color(0xFFFFE0EC)         // Rosa bajito (pastel rosado)
 
+val Purplle40 = Color(0xFF7B4397)       // Lila oscuro, elegante
+val PurplleGrey40 = Color(0xFF9B6FA4)   // Lila grisáceo oscuro
+val Pink400 = Color(0xFFFF5C8D)         // Rosa fuerte, vibrante
 
-//Blue Gray
-val BlueGray50 = Color(0xFFECEFF1)
-val BlueGray100 = Color(0xFFCFD8DC)
-val BlueGray200 = Color(0xFFB0BEC5)
-val BlueGray300 = Color(0xFF78909C)
-val BlueGray400 = Color(0xFF78909C)
-val BlueGray500 = Color(0xFF607D8B)
-val BlueGray600 = Color(0xFF546E7A)
-val BlueGray700 = Color(0xFF455A64)
-val BlueGray800 = Color(0xFF37474F)
-val BlueGray900 = Color(0xFF263238)
+val StrongdPurple = Color(0xFF5D3A8E)   // Lila/morado oscuro
+val MediumDdarkGray = Color(0xFF444444) // Gris medio-oscuro (para contraste)
+val Purpple = Color(0xFFB497D6)         // Lila intermedio (menos pastel, más neutro)
 
+// Tonos relacionados (Magenta, Rosa fuerte, Blanco)
+val Magenta = Color(0xFFFF00FF)        // Magenta puro
+val SoftWhite = Color(0xFFFFFFFF)      // Blanco puro
+val DeepPink = Color(0xFFFF1493)       // Rosa fuerte, intenso
+val LightPink = Color(0xFFFFD6E8)      // Rosa bajito, muy pastel
+val SoftLilac = Color(0xFFE5D0FF)      // Lila claro pastel
 

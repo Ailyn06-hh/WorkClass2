@@ -1,13 +1,11 @@
 package com.example.workclass2.ui.screens
 
 import android.Manifest
-import android.content.Context
-import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.ContentProviderOperation
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.provider.CalendarContract
 import android.provider.ContactsContract
@@ -29,8 +27,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.core.content.contentValuesOf
+import androidx.navigation.NavController
 import java.util.*
+import kotlin.collections.ArrayList
 
 @SuppressLint("QueryPermissionsNeeded")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -179,7 +178,7 @@ fun AppScreen(navController: NavController) {
                 }
 
                 if (nuevoNombre.isNotBlank() && nuevoTelefono.isNotBlank()) {
-                    AgregarContacto(context, nuevoNombre, nuevoTelefono)
+                    agregarContacto(context, nuevoNombre, nuevoTelefono)
                     Toast.makeText(context, "Contacto agregado", Toast.LENGTH_SHORT).show()
                     nuevoNombre = ""
                     nuevoTelefono = ""
@@ -268,34 +267,38 @@ fun AppScreen(navController: NavController) {
         }
     }
 }
+fun appScreen(){
 
-fun abrirAppContactos (context: Context){
-    val intent = Intent (Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
-    if (intent.resolveActivity(context.packageManager)!=null){
+}
+
+fun abrirAppContactos(context: Context){
+    val intent = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
+    if(intent.resolveActivity(context.packageManager) != null){
         context.startActivity(intent)
-    }else {
-        Toast.makeText(context,"No hay aplicacion para abrir contactos", Toast.LENGTH_SHORT).show()
+    } else{
+        Toast.makeText(context, "No se encontró una app para abrir contactos", Toast.LENGTH_SHORT).show()
     }
 }
-fun obtenerContactos(context: Context): List<String>{
+
+fun obtenerContactos(context: Context): List<String> {
     val lista = mutableListOf<String>()
     val cursor = context.contentResolver.query(
         ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-        null,null,null,null
+        null, null, null, null
     )
     cursor?.use {
-        val nombreInex = it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
-        val numeroiIndex = it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
-        while (it.moveToNext()){
-            val nombre = it.getString(nombreInex)
-            val numero = it.getString(numeroiIndex)
+        val nombreIndex = it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
+        val numbberIndex = it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+        while(it.moveToNext()){
+            val nombre = it.getString(nombreIndex)
+            val numero = it.getString(numbberIndex)
             lista.add("$nombre: $numero")
         }
     }
     return lista
 }
 
-fun AgregarContacto(context: Context,nombre: String,telefono: String){
+fun agregarContacto(context: Context, nombre: String, numero: String){
     val ops = ArrayList<ContentProviderOperation>().apply {
         add(
             ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
@@ -304,36 +307,29 @@ fun AgregarContacto(context: Context,nombre: String,telefono: String){
                 .build()
         )
         add(
-            ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
-                .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
-                .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
-                .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, nombre)
-                .build()
-        )
-        add(
-            ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
+            ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                 .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
                 .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
-                .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, telefono)
+                .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, numero)
                 .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)
                 .build()
         )
-
     }
-    try {
+    try{
         context.contentResolver.applyBatch(ContactsContract.AUTHORITY, ops)
-    }catch (e: Exception){
+    } catch (e: Exception){
         e.printStackTrace()
     }
 }
-fun agregarEvento (context: Context, titulo: String, descripcion: String, inicio:Long, fin:Long){
+
+fun agregarEvento(context: Context, titulo: String, description:String, inicio: Long, fin: Long){
     val values = ContentValues().apply {
         put(CalendarContract.Events.DTSTART, inicio)
         put(CalendarContract.Events.DTEND, fin)
         put(CalendarContract.Events.TITLE, titulo)
-        put(CalendarContract.Events.DESCRIPTION, descripcion)
+        put(CalendarContract.Events.DESCRIPTION, description)
         put(CalendarContract.Events.CALENDAR_ID, 1)
         put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().id)
     }
-    context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values)
+    context.contentResolver.insert(CalendarContract.Events.CONTENT_URI,values)
 }

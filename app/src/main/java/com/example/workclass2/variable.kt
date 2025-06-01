@@ -1,4 +1,4 @@
-package com.example.workclass2.Class
+package com.example.workclass2
 
 //class variable {
 //}

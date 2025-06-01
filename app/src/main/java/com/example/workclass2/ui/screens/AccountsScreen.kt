@@ -115,18 +115,40 @@ fun AccountsScreen(
                         }
                     }
                 },
-                onDeleteClick = { id ->
+                onDeleteClick = {id ->
                     viewModel.deleteAccount(id) { response ->
-                        if (response != null) {
+                        if (response != null) { // 👈 Aquí es suficiente si no tienes acceso a .isSuccessful
                             Log.d("debug-delete", "Cuenta con ID $id eliminada correctamente")
                             Toast.makeText(context, "Cuenta eliminada", Toast.LENGTH_SHORT).show()
+
+                            // Eliminar de la base de datos local
+                            CoroutineScope(Dispatchers.IO).launch {
+                                try {
+                                    accountDetail?.let {
+                                        accountDao.delete(it.toAccountEntity())
+                                        Log.d("debug-db", "Cuenta eliminada de Room")
+                                    }
+                                } catch (e: Exception) {
+                                    Log.d("debug-db", "Error al eliminar de Room: $e")
+                                }
+                            }
+
+                            showBottomSheet = false
+
+                            viewModel.getAccounts { newResponse ->
+                                if (newResponse.isSuccessful) {
+                                    accounts = newResponse.body() ?: emptyList()
+                                }
+                            }
+
                         } else {
                             Log.d("debug-delete", "Error al eliminar la cuenta con ID $id")
                             Toast.makeText(context, "Error al eliminar", Toast.LENGTH_SHORT).show()
                         }
                     }
-
                 }
+
+
             )
 
         }

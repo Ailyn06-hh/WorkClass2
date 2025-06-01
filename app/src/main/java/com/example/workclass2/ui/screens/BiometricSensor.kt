@@ -13,19 +13,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import org.w3c.dom.Text
 import java.util.concurrent.Executor
-
-
-
 
 
 @Composable
 fun BiometricScreen(
-    navController: NavHostController,
+    navController: NavController,
     onAuthSuccess: () -> Unit
-) {
+){
     val context = LocalContext.current
     val activity = context as FragmentActivity
     val executor = remember { ContextCompat.getMainExecutor(context) }
@@ -36,31 +33,33 @@ fun BiometricScreen(
     val promptInfo = remember {
         BiometricPrompt.PromptInfo.Builder()
             .setTitle("Biometric Authentication")
-            .setSubtitle("Log in using your biometric credential")
+            .setSubtitle("Lg in using your biometric credential")
             .setNegativeButtonText("Cancel")
             .build()
+
     }
 
     val biometricManager = BiometricManager.from(context)
     val canAuthenticate = biometricManager.canAuthenticate(
         BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL
+
     )
 
-    val currentOnAuthSuccess by rememberUpdatedState(newValue = onAuthSuccess)
+    val currentOnAuthSucces by rememberUpdatedState(newValue = onAuthSuccess)
 
     DisposableEffect(Unit) {
         val biometricPrompt = BiometricPrompt(
             activity,
             executor,
-            object : BiometricPrompt.AuthenticationCallback() {
+            object : BiometricPrompt.AuthenticationCallback(){
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                     super.onAuthenticationSucceeded(result)
-                    currentOnAuthSuccess()
+                    currentOnAuthSucces()
                 }
 
                 override fun onAuthenticationFailed() {
                     super.onAuthenticationFailed()
-                    authError = "Authentication failed. Try again."
+                    authError = "Authentication failed. Try again"
                 }
 
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
@@ -70,27 +69,27 @@ fun BiometricScreen(
             }
         )
 
-        if (canAuthenticate == BiometricManager.BIOMETRIC_SUCCESS) {
+        if (canAuthenticate == BiometricManager.BIOMETRIC_SUCCESS){
             biometricPrompt.authenticate(promptInfo)
-        } else {
-            authError = "Biometric authentication not supported on this device"
+        }else{
+            authError = "Biometrica authentication not supported on this device"
         }
 
-        onDispose {
-        }
+        onDispose {  }
     }
 
-    Column(
+    Column (
         modifier = Modifier
             .fillMaxSize()
-            .padding(32.dp),
+            .padding(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+
+    ){
         Text("Authenticating...")
         authError?.let {
             Spacer(modifier = Modifier.height(12.dp))
-            Text(it, color = MaterialTheme.colorScheme.error)
+            Text(it, color = MaterialTheme.colorScheme.secondary)
         }
     }
 }

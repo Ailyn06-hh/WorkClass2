@@ -1,6 +1,5 @@
 package com.example.workclass2.data.dao
 
-import android.accounts.Account
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -14,9 +13,8 @@ interface AccountDao {
     fun getAll(): List<AccountEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(account: AccountEntity)
+    fun insert(account:AccountEntity)
 
-    @Delete()
+    @Delete
     fun delete(account: AccountEntity)
-
 }

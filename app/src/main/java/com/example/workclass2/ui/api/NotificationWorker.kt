@@ -1,5 +1,6 @@
-package com.example.workclass2.Class
+package com.example.workclass2.ui.api
 import android.Manifest
+import android.R
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -12,7 +13,8 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.workclass2.MainActivity
-import kotlin.or
+import com.example.workclass2.ui.screens.NotificationClass
+
 class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
     Worker(appContext, workerParams) {
 
@@ -38,7 +40,7 @@ class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
 
 
         val builder = NotificationCompat.Builder(applicationContext, channelId)
-            .setSmallIcon(android.R.drawable.stat_sys_download)
+            .setSmallIcon(R.drawable.stat_sys_download)
             .setContentTitle("Descargando archivo...")
             .setContentText("Progreso de descarga")
             .setPriority(NotificationCompat.PRIORITY_LOW)
@@ -58,7 +60,7 @@ class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
 
         builder.setContentTitle("Descarga completada")
             .setContentText("Toca para abrir la app")
-            .setSmallIcon(android.R.drawable.stat_sys_download_done)
+            .setSmallIcon(R.drawable.stat_sys_download_done)
             .setProgress(0, 0, false)
             .setAutoCancel(true)
 
@@ -82,67 +84,4 @@ class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
         }
     }
 }
-//class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
-//    Worker(appContext, workerParams) {
-//
-//    private val channelId = "default_channel"
-//    private val notificationId = 1
-//
-//    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
-//    override fun doWork(): Result {
-//        createNotificationChannel()
-//
-//        val intent = Intent(applicationContext, MainActivity::class.java).apply {
-//            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-//        }
-//
-//        val pendingIntent = PendingIntent.getActivity(
-//            applicationContext,
-//            0,
-//            intent,
-//            PendingIntent.FLAG_IMMUTABLE
-//        )
-//
-//        val builder = NotificationCompat.Builder(applicationContext, channelId)
-//            .setSmallIcon(android.R.drawable.stat_sys_download)
-//            .setContentTitle("Descargando archivo...")
-//            .setContentText("Progreso de descarga")
-//            .setPriority(NotificationCompat.PRIORITY_LOW)
-//            .setOnlyAlertOnce(true)
-//            .setProgress(100, 0, false)
-//            .setContentIntent(pendingIntent)
-//            .setAutoCancel(true)
-//
-//        val notificationManager = NotificationManagerCompat.from(applicationContext)
-//        notificationManager.notify(notificationId, builder.build())
-//
-//        for (i in 1..100 step 10) {
-//            Thread.sleep(500)
-//            builder.setProgress(100, i, false)
-//            notificationManager.notify(notificationId, builder.build())
-//        }
-//
-//        builder.setContentTitle("Descarga completada")
-//            .setContentText("Toca para abrir la app")
-//            .setSmallIcon(android.R.drawable.stat_sys_download_done)
-//            .setProgress(0, 0, false)
-//            .setAutoCancel(true)
-//
-//        notificationManager.notify(notificationId, builder.build())
-//
-//        return Result.success()
-//    }
-//
-//
-//    private fun createNotificationChannel() {
-//        val name = "Default Channel"
-//        val descriptionText = "Canal para notificaciones de descargas"
-//        val importance = NotificationManager.IMPORTANCE_LOW
-//        val channel = NotificationChannel(channelId, name, importance).apply {
-//            description = descriptionText
-//        }
-//        val notificationManager: NotificationManager =
-//            applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//        notificationManager.createNotificationChannel(channel)
-//    }
-//}
+

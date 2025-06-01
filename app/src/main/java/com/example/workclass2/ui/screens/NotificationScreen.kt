@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -43,14 +44,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import com.example.workclass2.Class.NotificationWorker
 import com.example.workclass2.R
-import com.example.workclass2.ui.theme.WorkClassTheme
+//cambia segun el nombre que le hayas dado
+import com.example.workclass2.ui.api.NotificationWorker
 import java.util.concurrent.TimeUnit
-
-
-
-
 
 class NotificationClass : ComponentActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -216,5 +213,4 @@ fun NotificationScreen(navController: NavController, modifier: Modifier = Modifi
     }
 
 }
-
 
